@@ -1,24 +1,14 @@
 # Claude Forge
 
-**One agent that builds an army.**
+A Claude Code agent that helps you set up teams of specialized agents for your projects.
 
-Claude Forge analyzes any project — its codebase, conventions, PR review history, and your task — then creates a team of specialized [Claude Code](https://docs.anthropic.com/en/docs/claude-code) agents orchestrated to complete the work at the project's quality bar.
-
-<br>
-
-<div align="center">
-
-```
-You + Task + Context  →  Forge  →  Agent Team  →  Orchestrated Pipeline  →  Result
-```
-
-</div>
+It reads your codebase, looks at how the project's PR reviews work, and creates agents tailored to the project's conventions — so you spend less time learning patterns and more time contributing.
 
 <br>
 
-## Overview
+## What It Does
 
-Most AI coding tools generate code. Claude Forge generates **the agents that generate the code** — each one specialized, grounded in the actual project, and chained into a pipeline with quality checks and human approval gates.
+Instead of one general-purpose AI assistant, the forge creates a small team of focused agents — each one grounded in the actual project's code, tests, and review expectations.
 
 ```mermaid
 graph TD
@@ -127,11 +117,11 @@ Every agent team is tailored to the specific project. The forge reads the actual
 
 <br>
 
-## Key Features
+## Interesting Parts
 
 ### Reviewer Modeling
 
-The forge doesn't just lint code. It reads the project's PR review history — extracting the lead reviewer's actual comments, ranking them by frequency, and building a challenger agent that asks the same questions they would ask.
+One thing I found useful while building this: reading through a project's PR review history teaches you more than reading the source code. The forge tries to capture that by extracting the lead reviewer's actual comments and building an agent that raises similar concerns before you submit.
 
 ```mermaid
 graph LR
@@ -158,13 +148,13 @@ graph LR
     style Output fill:#ff6b35,color:#fff
 ```
 
-> **Why this matters:** A typical PR goes through 2–3 review rounds. The challenger catches the reviewer's likely concerns *before* submission, reducing round trips.
+> The idea is to catch likely review feedback before submitting, which can save a few round trips.
 
 <br>
 
 ### Self-Verifying Research
 
-Research agents don't just search — they prove their findings. Wrong research produces wrong code, so verification is mandatory.
+I kept running into a problem where research agents would confidently return wrong data — and that wrong data would end up in the code. So the research agent now has a verification step: it cross-references sources and shows its work.
 
 | Verification | How It Works |
 |---|---|
@@ -243,17 +233,17 @@ sequenceDiagram
 
 <br>
 
-## Design Principles
+## Things I Learned Building This
 
-| Principle | What It Means |
-|-----------|--------------|
-| **Ground in reality** | Every agent prompt contains patterns from the actual project — never generic templates |
-| **Model the reviewer** | The challenger uses the lead reviewer's real words, ranked by how often they raise each concern |
-| **Verify, don't trust** | Research agents prove findings with step-by-step computations and source verification |
-| **Minimum tools** | Each agent gets only what it needs — read-only agents can't modify files |
-| **Human checkpoints** | The pipeline pauses for approval after research and before submission |
-| **Anti-patterns are critical** | Telling agents what NOT to do prevents the most common mistakes |
-| **Test and iterate** | The first version of every agent is wrong — test on real work, then improve |
+| Lesson | Details |
+|--------|---------|
+| **Project-specific prompts matter** | Generic agents produce generic output. Agents grounded in the actual codebase do much better. |
+| **PR reviews are the best teacher** | Reading 20+ reviews taught the agents more than reading every source file. |
+| **Research needs verification** | If the research agent gets something wrong, everything downstream is wrong. Self-verification helps. |
+| **Restrict tools per agent** | Read-only agents shouldn't be able to write files. Fewer tools = fewer mistakes. |
+| **Humans should approve key decisions** | The pipeline pauses after research and before submission. Fully autonomous is tempting but risky. |
+| **Say what NOT to do** | Anti-patterns prevent the most common mistakes better than positive instructions alone. |
+| **First version is always wrong** | Test agents on real work, find what breaks, improve. Repeat. |
 
 <br>
 
@@ -291,28 +281,19 @@ claude-forge/
 
 <br>
 
-## How It Compares
+## Limitations
 
-| Approach | What You Get |
-|----------|-------------|
-| **Generic AI assistant** | One-size-fits-all code that often fails review |
-| **Custom CLAUDE.md** | Better context, but still one agent doing everything |
-| **Claude Forge** | Specialized agents grounded in the project, orchestrated with quality gates, simulating the actual reviewer |
+This is an experiment, not a production tool. Some honest caveats:
 
-<br>
+- **Claude Code only** — these agents don't work with other AI coding tools
+- **One project tested thoroughly** — the methodology works, but more real-world testing is needed
+- **Agents need iteration** — the forge produces a good first draft, but you'll want to refine after testing
+- **Not truly autonomous** — you still need to review, approve, and guide the pipeline
+
+## Contributing
+
+This is a work in progress. If you try it on a project and find ways to improve it, PRs and issues are welcome.
 
 ## License
 
 MIT
-
-<br>
-
----
-
-<div align="center">
-
-Built by [Pablo Carrasco](https://github.com/pablocaeg)
-
-*Not prompt engineering. Agent engineering.*
-
-</div>
