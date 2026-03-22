@@ -1,0 +1,33 @@
+{
+  "name": "claude-forge-marketplace",
+  "owner": {
+    "name": "Pablo Carrasco",
+    "email": "pablocaeg@github.com"
+  },
+  "metadata": {
+    "description": "Claude Forge plugin marketplace",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "claude-forge",
+      "source": ".",
+      "description": "Analyzes any project and creates orchestrated teams of specialized Claude Code agents. Studies codebase patterns, PR reviews, and conventions to produce agents grounded in the actual project.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Pablo Carrasco"
+      },
+      "homepage": "https://github.com/pablocaeg/claude-forge",
+      "repository": "https://github.com/pablocaeg/claude-forge",
+      "license": "MIT",
+      "keywords": [
+        "agents",
+        "orchestration",
+        "code-review",
+        "subagents",
+        "developer-tools"
+      ],
+      "category": "productivity"
+    }
+  ]
+}

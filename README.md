@@ -72,38 +72,44 @@ graph TD
 
 Make sure you have these installed:
 
-```bash
-# Claude Code CLI
-# Install from: https://docs.anthropic.com/en/docs/claude-code
+| Tool | Install | Purpose |
+|------|---------|---------|
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | See docs | Runs the plugin and agents |
+| [GitHub CLI](https://cli.github.com/) | `brew install gh` | PR review analysis and submission |
 
-# GitHub CLI (used for PR analysis)
-brew install gh    # macOS
-gh auth login      # authenticate with GitHub
+After installing the GitHub CLI, authenticate:
+
+```bash
+gh auth login
 ```
 
 ### Installation
 
-**Option A: As a Claude Code plugin**
+**Option A: From the marketplace**
 
 ```bash
-claude plugin install claude-forge --scope user
+# Add the marketplace (one time)
+claude plugin marketplace add pablocaeg/claude-forge
+
+# Install the plugin
+claude plugin install claude-forge@claude-forge-marketplace --scope user
 ```
 
-**Option B: From source**
+**Option B: From local directory**
 
 ```bash
 git clone https://github.com/pablocaeg/claude-forge.git
-claude --plugin-dir claude-forge
+claude plugin install ./claude-forge --scope user
 ```
 
-**Option C: Standalone agent (no plugin system)**
+**Option C: Standalone agent (no plugin system needed)**
 
 ```bash
 git clone https://github.com/pablocaeg/claude-forge.git
 cp claude-forge/forge.md ~/.claude/agents/
 ```
 
-### Verify Installation
+### Verify
 
 Open Claude Code in any project and run:
 
