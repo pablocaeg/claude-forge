@@ -9,7 +9,7 @@ Simulate the lead reviewer's feedback on the current changes. Uses reviewer patt
 ## Before Starting
 
 1. Read `.context/forge-analysis.md` for reviewer patterns
-2. If it doesn't exist, tell the user to run `/claude-forge:analyze` first
+2. If it doesn't exist, tell the user to run `/claude-army:analyze` first
 
 ## Process
 

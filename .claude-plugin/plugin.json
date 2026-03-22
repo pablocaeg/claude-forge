@@ -1,5 +1,5 @@
 {
-  "name": "claude-forge",
+  "name": "claude-army",
   "description": "Analyzes any project and creates orchestrated teams of specialized Claude Code agents. Studies codebase patterns, PR review history, and testing conventions to produce agents grounded in the actual project.",
   "version": "0.1.0",
   "author": {

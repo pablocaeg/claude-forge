@@ -1,5 +1,5 @@
 ---
-description: Create a team of specialized agents based on the project analysis. Run /claude-forge:analyze first. Generates agents in ~/.claude/agents/ with full subagent support.
+description: Create a team of specialized agents based on the project analysis. Run /claude-army:analyze first. Generates agents in ~/.claude/agents/ with full subagent support.
 tools: Read, Write, Glob, Grep, Bash
 model: opus
 ---
@@ -8,8 +8,8 @@ Create a team of specialized Claude Code agents based on the forge analysis. Age
 
 ## Before Starting
 
-1. Read `.context/forge-analysis.md` — this contains the project analysis from `/claude-forge:analyze`
-2. If the file doesn't exist, tell the user to run `/claude-forge:analyze` first
+1. Read `.context/forge-analysis.md` — this contains the project analysis from `/claude-army:analyze`
+2. If the file doesn't exist, tell the user to run `/claude-army:analyze` first
 3. Read the templates in `${CLAUDE_PLUGIN_ROOT}/templates/` for agent archetypes
 
 ## Agent Creation Process

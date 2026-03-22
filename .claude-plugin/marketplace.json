@@ -1,5 +1,5 @@
 {
-  "name": "claude-forge-marketplace",
+  "name": "claude-army-marketplace",
   "owner": {
     "name": "Pablo Carrasco",
     "email": "pablocaeg@github.com"
@@ -10,15 +10,15 @@
   },
   "plugins": [
     {
-      "name": "claude-forge",
+      "name": "claude-army",
       "source": ".",
       "description": "Analyzes any project and creates orchestrated teams of specialized Claude Code agents. Studies codebase patterns, PR reviews, and conventions to produce agents grounded in the actual project.",
       "version": "0.1.0",
       "author": {
         "name": "Pablo Carrasco"
       },
-      "homepage": "https://github.com/pablocaeg/claude-forge",
-      "repository": "https://github.com/pablocaeg/claude-forge",
+      "homepage": "https://github.com/pablocaeg/claude-army",
+      "repository": "https://github.com/pablocaeg/claude-army",
       "license": "MIT",
       "keywords": [
         "agents",

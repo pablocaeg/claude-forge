@@ -89,24 +89,24 @@ gh auth login
 
 ```bash
 # Add the marketplace (one time)
-claude plugin marketplace add pablocaeg/claude-forge
+claude plugin marketplace add pablocaeg/claude-army
 
 # Install the plugin
-claude plugin install claude-forge@claude-forge-marketplace --scope user
+claude plugin install claude-army@claude-army-marketplace --scope user
 ```
 
 **Option B: From local directory**
 
 ```bash
-git clone https://github.com/pablocaeg/claude-forge.git
-claude plugin install ./claude-forge --scope user
+git clone https://github.com/pablocaeg/claude-army.git
+claude plugin install ./claude-army --scope user
 ```
 
 **Option C: Standalone agent (no plugin system needed)**
 
 ```bash
-git clone https://github.com/pablocaeg/claude-forge.git
-cp claude-forge/forge.md ~/.claude/agents/
+git clone https://github.com/pablocaeg/claude-army.git
+cp claude-army/forge.md ~/.claude/agents/
 ```
 
 ### Verify
@@ -114,7 +114,7 @@ cp claude-forge/forge.md ~/.claude/agents/
 Open Claude Code in any project and run:
 
 ```
-/claude-forge:analyze
+/claude-army:analyze
 ```
 
 If it responds, you're set. If using Option C, use `@forge` instead.
@@ -126,7 +126,7 @@ If it responds, you're set. If using Option C, use `@forge` instead.
 ### Step 1: Analyze the Project
 
 ```
-/claude-forge:analyze
+/claude-army:analyze
 ```
 
 Reads the codebase and PR reviews. Extracts the lead reviewer's actual comments and ranks them by how often they come up. Saves the analysis to `.context/forge-analysis.md`.
@@ -145,7 +145,7 @@ your-project/
 ### Step 2: Create the Agent Team
 
 ```
-/claude-forge:create-team
+/claude-army:create-team
 ```
 
 Uses the analysis to generate agents in `~/.claude/agents/`. They live outside the plugin so they can spawn each other during orchestration.
@@ -161,7 +161,7 @@ Runs each agent in order with human checkpoints at key decisions.
 ### Step 4: Pre-check Before Submitting (optional)
 
 ```
-/claude-forge:challenge
+/claude-army:challenge
 ```
 
 Simulates the lead reviewer's feedback on your current changes before you submit.
@@ -325,16 +325,16 @@ sequenceDiagram
 ## Project Structure
 
 ```
-claude-forge/
+claude-army/
 ├── .claude-plugin/
 │   └── plugin.json            # Plugin manifest
 ├── skills/
 │   ├── analyze/
-│   │   └── SKILL.md           # /claude-forge:analyze
+│   │   └── SKILL.md           # /claude-army:analyze
 │   ├── create-team/
-│   │   └── SKILL.md           # /claude-forge:create-team
+│   │   └── SKILL.md           # /claude-army:create-team
 │   └── challenge/
-│       └── SKILL.md           # /claude-forge:challenge
+│       └── SKILL.md           # /claude-army:challenge
 ├── templates/                 # Agent archetypes used by create-team
 │   ├── researcher.md
 │   ├── builder.md

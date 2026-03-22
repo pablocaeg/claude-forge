@@ -96,4 +96,4 @@ Save the analysis to `.context/forge-analysis.md` with these sections:
 [commands that must run before submitting]
 ```
 
-Tell the user the analysis is complete and they can run `/claude-forge:create-team` next.
+Tell the user the analysis is complete and they can run `/claude-army:create-team` next.
