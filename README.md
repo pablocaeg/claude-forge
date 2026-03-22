@@ -1,8 +1,15 @@
+<div align="center">
+
 # Claude Forge
 
 A Claude Code plugin that reads your project and creates a team of specialized agents for it.
 
 It looks at the codebase, studies how PR reviews work in the project, and generates agents that understand the project's actual conventions, not generic ones.
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-Plugin-orange.svg)](https://docs.anthropic.com/en/docs/claude-code)
+
+</div>
 
 <br>
 
@@ -59,20 +66,58 @@ graph TD
 
 <br>
 
-## Quick Start
+## Setup
 
-### 1. Install
+### Prerequisites
+
+Make sure you have these installed:
 
 ```bash
-# As a Claude Code plugin
-claude plugin install claude-forge --scope user
+# Claude Code CLI
+# Install from: https://docs.anthropic.com/en/docs/claude-code
 
-# Or manually
+# GitHub CLI (used for PR analysis)
+brew install gh    # macOS
+gh auth login      # authenticate with GitHub
+```
+
+### Installation
+
+**Option A: As a Claude Code plugin**
+
+```bash
+claude plugin install claude-forge --scope user
+```
+
+**Option B: From source**
+
+```bash
 git clone https://github.com/pablocaeg/claude-forge.git
 claude --plugin-dir claude-forge
 ```
 
-### 2. Analyze the Project
+**Option C: Standalone agent (no plugin system)**
+
+```bash
+git clone https://github.com/pablocaeg/claude-forge.git
+cp claude-forge/forge.md ~/.claude/agents/
+```
+
+### Verify Installation
+
+Open Claude Code in any project and run:
+
+```
+/claude-forge:analyze
+```
+
+If it responds, you're set. If using Option C, use `@forge` instead.
+
+<br>
+
+## Usage
+
+### Step 1: Analyze the Project
 
 ```
 /claude-forge:analyze
@@ -80,7 +125,18 @@ claude --plugin-dir claude-forge
 
 Reads the codebase and PR reviews. Extracts the lead reviewer's actual comments and ranks them by how often they come up. Saves the analysis to `.context/forge-analysis.md`.
 
-### 3. Create the Agent Team
+You can optionally prepare a `.context/` folder with additional information:
+
+```
+your-project/
+├── .context/
+│   ├── task.md              # What you want to accomplish
+│   ├── research/            # Background docs, specs, references
+│   └── examples/            # Examples of desired output
+└── src/
+```
+
+### Step 2: Create the Agent Team
 
 ```
 /claude-forge:create-team
@@ -88,7 +144,7 @@ Reads the codebase and PR reviews. Extracts the lead reviewer's actual comments 
 
 Uses the analysis to generate agents in `~/.claude/agents/`. They live outside the plugin so they can spawn each other during orchestration.
 
-### 4. Run the Pipeline
+### Step 3: Run the Pipeline
 
 ```
 @[project]-orchestrator [describe your task]
@@ -96,7 +152,7 @@ Uses the analysis to generate agents in `~/.claude/agents/`. They live outside t
 
 Runs each agent in order with human checkpoints at key decisions.
 
-### 5. Pre-check Before Submitting (optional)
+### Step 4: Pre-check Before Submitting (optional)
 
 ```
 /claude-forge:challenge
@@ -314,8 +370,14 @@ This is an experiment, not a production tool. Some honest caveats:
 
 ## Contributing
 
-This is a work in progress. If you try it on a project and find ways to improve it, PRs and issues are welcome.
+This is a work in progress. If you try it on a project and find ways to improve it, issues and PRs are welcome.
 
-## License
+<br>
 
-MIT
+---
+
+<div align="center">
+
+MIT License
+
+</div>
