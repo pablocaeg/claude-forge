@@ -61,43 +61,48 @@ graph TD
 
 ## Quick Start
 
-### 1. Install the Forge
+### 1. Install
 
 ```bash
+# As a Claude Code plugin
+claude plugin install claude-forge --scope user
+
+# Or manually
 git clone https://github.com/pablocaeg/claude-forge.git
-cp claude-forge/forge.md ~/.claude/agents/
+claude --plugin-dir claude-forge
 ```
 
-### 2. Prepare Your Task (optional)
-
-Create a `.context/` folder in your project with relevant information:
+### 2. Analyze the Project
 
 ```
-your-project/
-├── .context/
-│   ├── task.md              # What you want to accomplish
-│   ├── research/            # Background docs, specs, references
-│   └── examples/            # Examples of desired output
-└── src/                     # Your project files
+/claude-forge:analyze
 ```
 
-> The `.context/` folder is optional. The forge can analyze the project and task from your prompt alone. But providing context produces better agents.
+The forge reads the codebase, studies PR review patterns (extracts the lead reviewer's actual comments and ranks them by frequency), and saves a structured analysis to `.context/forge-analysis.md`.
 
-### 3. Run the Forge
-
-```
-@forge Analyze this project and build agents for: [describe your task]
-```
-
-The forge reads your project, studies its PR history, and creates a complete agent team in `~/.claude/agents/`.
-
-### 4. Execute the Pipeline
+### 3. Create the Agent Team
 
 ```
-@[project]-orchestrator Go
+/claude-forge:create-team
 ```
 
-The orchestrator runs each agent in sequence, with human checkpoints at critical decisions.
+Reads the analysis and generates a team of specialized agents in `~/.claude/agents/`, each grounded in the project's actual patterns. The agents live outside the plugin so they have full subagent spawning support.
+
+### 4. Run the Pipeline
+
+```
+@[project]-orchestrator [describe your task]
+```
+
+The orchestrator chains all agents in sequence with human checkpoints at critical decisions.
+
+### 5. Pre-check Before Submitting (optional)
+
+```
+/claude-forge:challenge
+```
+
+Simulates the lead reviewer's feedback on your current changes using the patterns extracted during analysis.
 
 <br>
 
@@ -259,20 +264,29 @@ sequenceDiagram
 
 ```
 claude-forge/
-├── forge.md                   # The forge agent ← install this
-├── templates/                 # Agent archetypes the forge customizes
-│   ├── researcher.md          #   Self-verifying research
-│   ├── builder.md             #   Pattern-matching code creation
-│   ├── reviewer.md            #   Standards-based review
-│   ├── challenger.md          #   Lead reviewer simulation
-│   ├── submitter.md           #   PR/deliverable creation
-│   ├── orchestrator.md        #   Pipeline coordination
-│   ├── expert.md              #   Codebase navigation
-│   └── test-writer.md         #   Convention-matching tests
+├── .claude-plugin/
+│   └── plugin.json            # Plugin manifest
+├── skills/
+│   ├── analyze/
+│   │   └── SKILL.md           # /claude-forge:analyze — study the project
+│   ├── create-team/
+│   │   └── SKILL.md           # /claude-forge:create-team — generate agents
+│   └── challenge/
+│       └── SKILL.md           # /claude-forge:challenge — reviewer simulation
+├── templates/                 # Agent archetypes used by create-team
+│   ├── researcher.md
+│   ├── builder.md
+│   ├── reviewer.md
+│   ├── challenger.md
+│   ├── submitter.md
+│   ├── orchestrator.md
+│   ├── expert.md
+│   └── test-writer.md
+├── forge.md                   # Standalone agent (alternative to plugin)
 ├── docs/
-│   ├── context-guide.md       #   How to structure .context/ folders
-│   ├── methodology.md         #   The thinking behind the approach
-│   └── customization.md       #   How to modify generated agents
+│   ├── context-guide.md
+│   ├── methodology.md
+│   └── customization.md
 ├── LICENSE
 └── README.md
 ```
@@ -283,8 +297,8 @@ claude-forge/
 
 | Requirement | Purpose |
 |---|---|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | Runs the agents |
-| [GitHub CLI](https://cli.github.com/) (`gh`) | PR analysis and submission |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | Runs the plugin and agents |
+| [GitHub CLI](https://cli.github.com/) (`gh`) | PR review analysis and submission |
 | A project to work on | The forge needs a real codebase to analyze |
 
 <br>
