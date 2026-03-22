@@ -12,45 +12,49 @@ Instead of one general-purpose AI assistant, the forge creates a small team of f
 
 ```mermaid
 graph TD
-    subgraph Input
-        A["📋 Your task"]
-        B["📁 Project codebase"]
-        C["💬 PR review history"]
+    subgraph input [" What you provide "]
+        A["Your task description"]
+        B["Project codebase"]
+        C["PR review history"]
     end
 
-    subgraph Forge ["🔨 FORGE — Analyzes Everything"]
-        D["Reads code patterns\n& conventions"]
-        E["Extracts reviewer\ncomments & priorities"]
-        F["Studies test patterns\n& quality bar"]
+    subgraph forge [" Forge — analyzes everything "]
+        D["Code patterns\n& conventions"]
+        E["Reviewer comments\n& priorities"]
+        F["Test patterns\n& quality bar"]
     end
 
-    subgraph Team ["Generated Agent Team"]
-        G["🔍 Researcher\nVerifies facts"]
-        H["🏗️ Builder\nWrites code"]
-        I["✅ Reviewer\nChecks standards"]
-        J["⚔️ Challenger\nSimulates lead reviewer"]
-        K["📋 Submitter\nCreates PRs"]
+    subgraph agents [" Generated agent team "]
+        G["Researcher"]
+        H["Builder"]
+        I["Reviewer"]
+        J["Challenger"]
+        K["Submitter"]
     end
 
-    subgraph Pipeline ["🎯 Orchestrator — Runs the Pipeline"]
-        L["Phase 1: Research"]
-        M["Phase 2: Build"]
-        N["Phase 3: Review & Fix"]
-        O["Phase 4: Challenge & Fix"]
-        P["Phase 5: Submit"]
+    subgraph pipeline [" Orchestrated pipeline "]
+        L["Research"] --> M["Build"] --> N["Review\n& fix"] --> O["Challenge\n& fix"] --> P["Submit"]
     end
 
-    A & B & C --> Forge
-    D & E & F --> Team
-    G --> L
-    H --> M
-    I --> N
-    J --> O
-    K --> P
-    L --> M --> N --> O --> P
+    A --> D
+    B --> D
+    B --> F
+    C --> E
 
-    style Forge fill:#ff6b35,color:#fff
-    style Pipeline fill:#004e89,color:#fff
+    D --> G & H
+    E --> J
+    F --> I
+
+    G -.-> L
+    H -.-> M
+    I -.-> N
+    J -.-> O
+    K -.-> P
+
+    style input fill:#f0f4f8,stroke:#c9d6e3,color:#2d3748
+    style forge fill:#ebf5ff,stroke:#90cdf4,color:#2b6cb0
+    style agents fill:#f0fff4,stroke:#9ae6b4,color:#276749
+    style pipeline fill:#fffbeb,stroke:#fbd38d,color:#975a16
 ```
 
 <br>
@@ -60,10 +64,7 @@ graph TD
 ### 1. Install the Forge
 
 ```bash
-# Clone the repo
 git clone https://github.com/pablocaeg/claude-forge.git
-
-# Copy the forge agent to your Claude Code agents directory
 cp claude-forge/forge.md ~/.claude/agents/
 ```
 
@@ -125,27 +126,31 @@ One thing I found useful while building this: reading through a project's PR rev
 
 ```mermaid
 graph LR
-    subgraph Analysis ["PR Review Analysis"]
-        A["Read 20–40+\nPR reviews"] --> B["Extract lead\nreviewer comments"]
-        B --> C["Rank by\nfrequency"]
+    subgraph collect [" Collect "]
+        A["Read 20–40+\nPR reviews"]
     end
 
-    subgraph Tiers ["Priority Tiers"]
-        D["🔴 Tier 1\nAsked on 50%+ of PRs"]
-        E["🟡 Tier 2\nAsked on 25–50%"]
-        F["🟢 Tier 3\nAsked on 10–25%"]
+    subgraph extract [" Extract "]
+        B["Lead reviewer\ncomments"]
     end
 
-    subgraph Output ["Challenger Agent"]
-        G["Simulates review\nusing real quotes"]
-        H["Routes each issue\nto the right fix agent"]
+    subgraph rank [" Rank "]
+        C["Tier 1 — 50%+ of PRs"]
+        D["Tier 2 — 25–50%"]
+        E["Tier 3 — 10–25%"]
     end
 
-    C --> D & E & F
-    D & E & F --> G --> H
+    subgraph result [" Challenger agent "]
+        F["Simulates review\nwith real quotes"]
+        G["Routes issues\nto fix agents"]
+    end
 
-    style Analysis fill:#f8f9fa,color:#333
-    style Output fill:#ff6b35,color:#fff
+    A --> B --> C & D & E --> F --> G
+
+    style collect fill:#f0f4f8,stroke:#c9d6e3,color:#2d3748
+    style extract fill:#ebf5ff,stroke:#90cdf4,color:#2b6cb0
+    style rank fill:#fffbeb,stroke:#fbd38d,color:#975a16
+    style result fill:#f0fff4,stroke:#9ae6b4,color:#276749
 ```
 
 > The idea is to catch likely review feedback before submitting, which can save a few round trips.
@@ -161,70 +166,58 @@ I kept running into a problem where research agents would confidently return wro
 | **Algorithms** | Computes step-by-step proofs against known valid data |
 | **Sources** | Fetches every URL to confirm it's accessible and contains the claimed info |
 | **Facts** | Cross-references from 2+ independent official sources |
-| **Status** | Every finding tagged: ✅ Verified, ⚠️ Partial, ❌ Unverified |
-
-```
-Example — verifying a checksum algorithm:
-
-  Input:  00177041
-  Weights: [8, 7, 6, 5, 4, 3, 2]
-  Step 1:  0×8 + 0×7 + 1×6 + 7×5 + 7×4 + 0×3 + 4×2 = 77
-  Step 2:  11 - (77 mod 11) = 11 → edge case → 1
-  Step 3:  Last digit = 1 ✓
-
-  Status: ✅ Verified against 5 real IDs
-```
+| **Status** | Every finding tagged: Verified Verified, Partial Partial, Unverified Unverified |
 
 <br>
 
 ### Orchestrated Execution
 
-Agents run in a managed pipeline — not independently. Each phase depends on the previous one, with automated test runs and human approval gates.
+Agents run in a managed pipeline — not independently. Each phase depends on the previous one, with test runs between phases and human approval gates at key decisions.
 
 ```mermaid
 sequenceDiagram
     actor You
-    participant O as 🎯 Orchestrator
-    participant R as 🔍 Researcher
-    participant B as 🏗️ Builder
-    participant V as ✅ Reviewer
-    participant C as ⚔️ Challenger
-    participant S as 📋 Submitter
+    participant O as Orchestrator
+    participant R as Researcher
+    participant B as Builder
+    participant V as Reviewer
+    participant C as Challenger
+    participant S as Submitter
 
-    rect rgb(240, 248, 255)
+    rect rgb(240, 244, 248)
         Note over O,R: Phase 1 — Research
         O->>R: Gather & verify information
-        R-->>O: Findings (with verification status)
+        R-->>O: Findings with verification status
     end
 
-    O-->>You: ⏸ Research complete. Confirm?
-    You->>O: ✅ Proceed
+    O-->>You: Research complete — confirm?
+    You->>O: Confirmed
 
-    rect rgb(240, 255, 240)
+    rect rgb(240, 248, 240)
         Note over O,B: Phase 2 — Build
-        O->>B: Create code with confirmed findings
+        O->>B: Create code from findings
         B-->>O: Code ready
-        O->>O: Run tests ✅
+        O->>O: Run tests
     end
 
-    rect rgb(255, 248, 240)
+    rect rgb(248, 245, 240)
         Note over O,V: Phase 3 — Review
         O->>V: Check against standards
         V-->>O: Issues found
-        O->>O: Fix blockers
+        O->>O: Fix issues
     end
 
-    rect rgb(255, 240, 240)
+    rect rgb(248, 240, 240)
         Note over O,C: Phase 4 — Challenge
         O->>C: Simulate lead reviewer
         C-->>O: Questions + fix routing
         O->>O: Address challenges
     end
 
-    O-->>You: ⏸ All checks pass. Submit?
-    You->>O: ✅ Go
+    O-->>You: All checks pass — submit?
+    You->>O: Go ahead
 
-    rect rgb(240, 240, 255)
+    rect rgb(240, 240, 248)
         Note over O,S: Phase 5 — Submit
         O->>S: Create PR
         S-->>You: PR URL
