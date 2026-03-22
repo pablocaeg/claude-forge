@@ -1,14 +1,14 @@
 # Claude Forge
 
-A Claude Code agent that helps you set up teams of specialized agents for your projects.
+A Claude Code plugin that reads your project and creates a team of specialized agents for it.
 
-It reads your codebase, looks at how the project's PR reviews work, and creates agents tailored to the project's conventions — so you spend less time learning patterns and more time contributing.
+It looks at the codebase, studies how PR reviews work in the project, and generates agents that understand the project's actual conventions, not generic ones.
 
 <br>
 
 ## What It Does
 
-Instead of one general-purpose AI assistant, the forge creates a small team of focused agents — each one grounded in the actual project's code, tests, and review expectations.
+You get a small team of agents, each focused on one job, built from the project's real code and review patterns.
 
 ```mermaid
 graph TD
@@ -18,10 +18,10 @@ graph TD
         C["PR review access"]
     end
 
-    subgraph forge [" Forge — analyzes everything "]
-        D["Code patterns\n& conventions"]
-        E["Reviewer comments\n& priorities"]
-        F["Test patterns\n& quality bar"]
+    subgraph forge [" Forge analyzes everything "]
+        D["Code patterns\nand conventions"]
+        E["Reviewer comments\nand priorities"]
+        F["Test patterns\nand quality bar"]
     end
 
     subgraph agents [" Generated agent team "]
@@ -33,7 +33,7 @@ graph TD
     end
 
     subgraph pipeline [" Orchestrated pipeline "]
-        L["Research"] --> M["Build"] --> N["Review\n& fix"] --> O["Challenge\n& fix"] --> P["Submit"]
+        L["Research"] --> M["Build"] --> N["Review\nand fix"] --> O["Challenge\nand fix"] --> P["Submit"]
     end
 
     A --> D
@@ -78,7 +78,7 @@ claude --plugin-dir claude-forge
 /claude-forge:analyze
 ```
 
-The forge reads the codebase, studies PR review patterns (extracts the lead reviewer's actual comments and ranks them by frequency), and saves a structured analysis to `.context/forge-analysis.md`.
+Reads the codebase and PR reviews. Extracts the lead reviewer's actual comments and ranks them by how often they come up. Saves the analysis to `.context/forge-analysis.md`.
 
 ### 3. Create the Agent Team
 
@@ -86,7 +86,7 @@ The forge reads the codebase, studies PR review patterns (extracts the lead revi
 /claude-forge:create-team
 ```
 
-Reads the analysis and generates a team of specialized agents in `~/.claude/agents/`, each grounded in the project's actual patterns. The agents live outside the plugin so they have full subagent spawning support.
+Uses the analysis to generate agents in `~/.claude/agents/`. They live outside the plugin so they can spawn each other during orchestration.
 
 ### 4. Run the Pipeline
 
@@ -94,7 +94,7 @@ Reads the analysis and generates a team of specialized agents in `~/.claude/agen
 @[project]-orchestrator [describe your task]
 ```
 
-The orchestrator chains all agents in sequence with human checkpoints at critical decisions.
+Runs each agent in order with human checkpoints at key decisions.
 
 ### 5. Pre-check Before Submitting (optional)
 
@@ -102,24 +102,24 @@ The orchestrator chains all agents in sequence with human checkpoints at critica
 /claude-forge:challenge
 ```
 
-Simulates the lead reviewer's feedback on your current changes using the patterns extracted during analysis.
+Simulates the lead reviewer's feedback on your current changes before you submit.
 
 <br>
 
 ## What Gets Created
 
-Every agent team is tailored to the specific project. The forge reads the actual codebase and designs agents grounded in its patterns — not generic templates.
+Every team is different. The forge reads the actual codebase and builds agents around its patterns.
 
-| Agent | Purpose | How It's Customized |
-|-------|---------|-------------------|
-| **Researcher** | Gathers and verifies information | Knows what data the builder needs, verifies against project requirements |
-| **Builder** | Creates code matching project conventions | Templates from actual project files, follows exact naming and structure |
-| **Reviewer** | Checks against project standards | Uses the project's real linter config, test conventions, PR checklist |
-| **Challenger** | Simulates the lead reviewer | Built from their actual PR comments, ranked by how often they raise each concern |
-| **Submitter** | Creates polished PRs | Matches the format from the project's best accepted PRs |
-| **Orchestrator** | Chains everything together | Dependencies between agents, test runs between phases, human approval gates |
+| Agent | What it does | What makes it project-specific |
+|-------|-------------|-------------------------------|
+| **Researcher** | Gathers and verifies information | Knows what the builder needs, verifies against project requirements |
+| **Builder** | Writes code | Uses templates from real project files, follows naming and structure |
+| **Reviewer** | Checks against standards | Uses the project's linter config, test conventions, PR checklist |
+| **Challenger** | Simulates the lead reviewer | Built from their actual comments, ranked by frequency |
+| **Submitter** | Creates PRs | Matches the format from the project's best accepted PRs |
+| **Orchestrator** | Runs the pipeline | Chains agents with test runs between phases and human approval gates |
 | **Expert** | Answers codebase questions | Architecture map and entry points from the actual project |
-| **Test Writer** | Writes tests matching conventions | Uses the project's assertion library, fixture patterns, coverage requirements |
+| **Test Writer** | Writes tests | Uses the project's assertion library, fixture patterns, coverage target |
 
 <br>
 
@@ -127,27 +127,27 @@ Every agent team is tailored to the specific project. The forge reads the actual
 
 ### Reviewer Modeling
 
-One thing I found useful while building this: reading through a project's PR review access teaches you more than reading the source code. The forge tries to capture that by extracting the lead reviewer's actual comments and building an agent that raises similar concerns before you submit.
+One thing I found useful while building this: reading through a project's PR reviews teaches you more than reading the source code. The forge captures that by extracting the lead reviewer's actual comments and building an agent that raises the same concerns before you submit.
 
 ```mermaid
 graph LR
     subgraph collect [" Collect "]
-        A["Read 20–40+\nPR reviews"]
+        A["Read 20 to 40+\nPR reviews"]
     end
 
     subgraph extract [" Extract "]
         B["Lead reviewer\ncomments"]
     end
 
-    subgraph rank [" Rank "]
-        C["Tier 1 — 50%+ of PRs"]
-        D["Tier 2 — 25–50%"]
-        E["Tier 3 — 10–25%"]
+    subgraph rank [" Rank by frequency "]
+        C["Tier 1: raised on\n50%+ of PRs"]
+        D["Tier 2: raised on\n25 to 50%"]
+        E["Tier 3: raised on\n10 to 25%"]
     end
 
     subgraph result [" Challenger agent "]
         F["Simulates review\nwith real quotes"]
-        G["Routes issues\nto fix agents"]
+        G["Routes each issue\nto the right agent"]
     end
 
     A --> B --> C & D & E --> F --> G
@@ -158,26 +158,26 @@ graph LR
     style result fill:#f0fff4,stroke:#9ae6b4,color:#276749
 ```
 
-> The idea is to catch likely review feedback before submitting, which can save a few round trips.
+The idea is to catch likely feedback before submitting, which can save a few review rounds.
 
 <br>
 
 ### Self-Verifying Research
 
-I kept running into a problem where research agents would confidently return wrong data — and that wrong data would end up in the code. So the research agent now has a verification step: it cross-references sources and shows its work.
+I kept running into a problem where the research agent would confidently return wrong data, and that wrong data would end up in the code. So the research agent now verifies its own findings before passing them on.
 
-| Verification | How It Works |
-|---|---|
-| **Algorithms** | Computes step-by-step proofs against known valid data |
-| **Sources** | Fetches every URL to confirm it's accessible and contains the claimed info |
-| **Facts** | Cross-references from 2+ independent official sources |
-| **Status** | Every finding tagged: Verified Verified, Partial Partial, Unverified Unverified |
+| What it verifies | How |
+|-----------------|-----|
+| Algorithms | Computes step by step against known valid data |
+| Sources | Fetches every URL to confirm it loads and has the right content |
+| Facts | Cross-references from 2+ independent official sources |
+| Status | Tags every finding: verified, partial, or unverified |
 
 <br>
 
 ### Orchestrated Execution
 
-Agents run in a managed pipeline — not independently. Each phase depends on the previous one, with test runs between phases and human approval gates at key decisions.
+Agents run in a managed pipeline, not independently. Each phase depends on the previous one. The orchestrator runs tests between phases and pauses for human approval at key moments.
 
 ```mermaid
 sequenceDiagram
@@ -191,19 +191,19 @@ sequenceDiagram
     participant S as Submitter
 
     rect rgb(240, 244, 248)
-        Note over O,R: Phase 1 — Research
-        O->>R: Gather & verify information
+        Note over O,R: Phase 1: Research
+        O->>R: Gather and verify information
         R->>R: Cross-reference sources
-        R->>R: Verify URLs accessible
-        R->>R: Prove algorithms step-by-step
+        R->>R: Verify URLs
+        R->>R: Prove algorithms step by step
         R-->>O: Findings with verification status
     end
 
-    O-->>You: Research complete — confirm?
+    O-->>You: Research complete. Confirm?
     You->>O: Confirmed
 
     rect rgb(240, 248, 240)
-        Note over O,T: Phase 2 — Build & Test
+        Note over O,T: Phase 2: Build and Test
         O->>B: Create code from findings
         B-->>O: Code ready
         O->>T: Write tests for new code
@@ -212,7 +212,7 @@ sequenceDiagram
     end
 
     rect rgb(248, 245, 240)
-        Note over O,V: Phase 3 — Review & Fix
+        Note over O,V: Phase 3: Review and Fix
         O->>V: Check all changes against standards
         V-->>O: 2 blockers, 1 warning
         O->>B: Fix blocker in validation
@@ -223,22 +223,22 @@ sequenceDiagram
     end
 
     rect rgb(248, 240, 240)
-        Note over O,C: Phase 4 — Challenge & Fix
+        Note over O,C: Phase 4: Challenge and Fix
         O->>C: Simulate lead reviewer
-        C-->>O: 3 questions + fix routing
+        C-->>O: 3 questions with fix routing
         C-->>O: Q1 needs research, Q2 needs code fix
         O->>R: Verify Q1 claim
-        R-->>O: Confirmed — no change needed
-        O->>B: Fix Q2 in invoices.go
+        R-->>O: Confirmed, no change needed
+        O->>B: Fix Q2
         B-->>O: Fixed
         O->>O: Re-run tests
     end
 
-    O-->>You: All checks pass — submit?
+    O-->>You: All checks pass. Submit?
     You->>O: Go ahead
 
     rect rgb(240, 240, 248)
-        Note over O,S: Phase 5 — Submit
+        Note over O,S: Phase 5: Submit
         O->>S: Create PR
         S-->>You: PR URL
     end
@@ -250,13 +250,13 @@ sequenceDiagram
 
 | Lesson | Details |
 |--------|---------|
-| **Project-specific prompts matter** | Generic agents produce generic output. Agents grounded in the actual codebase do much better. |
-| **PR reviews are the best teacher** | Reading 20+ reviews taught the agents more than reading every source file. |
-| **Research needs verification** | If the research agent gets something wrong, everything downstream is wrong. Self-verification helps. |
-| **Restrict tools per agent** | Read-only agents shouldn't be able to write files. Fewer tools = fewer mistakes. |
-| **Humans should approve key decisions** | The pipeline pauses after research and before submission. Fully autonomous is tempting but risky. |
-| **Say what NOT to do** | Anti-patterns prevent the most common mistakes better than positive instructions alone. |
-| **First version is always wrong** | Test agents on real work, find what breaks, improve. Repeat. |
+| Project-specific prompts matter | Generic agents produce generic output. Grounding them in the actual codebase makes a big difference. |
+| PR reviews are the best teacher | Reading 20+ reviews taught the agents more than reading every source file. |
+| Research needs verification | If the research agent gets something wrong, everything downstream is wrong too. |
+| Restrict tools per agent | Read-only agents should not be able to write files. Fewer tools, fewer mistakes. |
+| Humans should approve key decisions | The pipeline pauses after research and before submission. Full autonomy is tempting but risky. |
+| Say what NOT to do | Telling agents what to avoid prevents mistakes better than only telling them what to do. |
+| First version is always wrong | Test agents on real work, find what breaks, fix them. Repeat. |
 
 <br>
 
@@ -268,11 +268,11 @@ claude-forge/
 │   └── plugin.json            # Plugin manifest
 ├── skills/
 │   ├── analyze/
-│   │   └── SKILL.md           # /claude-forge:analyze — study the project
+│   │   └── SKILL.md           # /claude-forge:analyze
 │   ├── create-team/
-│   │   └── SKILL.md           # /claude-forge:create-team — generate agents
+│   │   └── SKILL.md           # /claude-forge:create-team
 │   └── challenge/
-│       └── SKILL.md           # /claude-forge:challenge — reviewer simulation
+│       └── SKILL.md           # /claude-forge:challenge
 ├── templates/                 # Agent archetypes used by create-team
 │   ├── researcher.md
 │   ├── builder.md
@@ -307,10 +307,10 @@ claude-forge/
 
 This is an experiment, not a production tool. Some honest caveats:
 
-- **Claude Code only** — these agents don't work with other AI coding tools
-- **One project tested thoroughly** — the methodology works, but more real-world testing is needed
-- **Agents need iteration** — the forge produces a good first draft, but you'll want to refine after testing
-- **Not truly autonomous** — you still need to review, approve, and guide the pipeline
+- Works with Claude Code only. Other AI coding tools are not supported.
+- Tested thoroughly on one project so far. The methodology works, but more testing would help.
+- The forge produces a solid first draft of agents, but you will want to refine them after testing on real work.
+- Not fully autonomous. You still review, approve, and guide the pipeline.
 
 ## Contributing
 
